@@ -13,21 +13,41 @@ jobs:
       - checkout
       - run: echo "Hello, World"
   
-  create_infrastructure:
+  # create_infrastructure:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Create cloudformation stack
+  #         command: |
+  #           aws cloudformation deploy --template-file template.yml --stack-name stack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
+
+  configure_infrastructure: 
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["0d:4f:a8:8a:c9:2b:52:5f:e2:b6:70:64:f2:e8:5f:bd"] 
       - run:
-          name: Create cloudformation stack
+          name: Install Ansible
           command: |
-            aws cloudformation deploy --template-file template.yml --stack-name stack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i inventory main.yml
 
 
 workflows:
   udactityWorkflow:
     jobs:
       - build
-      - create_infrastructure:
-          requires:
-            - build
+      configure_infrastructure:
+        requires:
+          - build
+      # - create_infrastructure:
+      #     requires:
+      #       - build
