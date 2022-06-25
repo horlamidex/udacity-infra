@@ -8,7 +8,7 @@ orbs:
 jobs:
   build:
     docker:
-    - image: "circleci/welcome-orb@0.4.1"
+    - image: cimg/base:2021.11
     steps:
       - checkout
       - run: echo "Hello, World"
@@ -28,4 +28,6 @@ workflows:
   udactityWorkflow:
     jobs:
       - build
-      - create_infrastructure
+      - create_infrastructure:
+          requires:
+            - build
