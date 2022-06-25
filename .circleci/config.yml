@@ -1,0 +1,31 @@
+version: 2.1
+orbs:
+  welcome:
+    image: "circleci/welcome-orb@0.4.1"
+  aws-cli:
+    - image: "circleci/aws-cli@2.0.3"
+
+jobs:
+  build:
+    docker:
+      - welcome
+    steps:
+      - checkout
+      - run: echo "Hello, World"
+  
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: |
+          name: Create cloudformation stack
+          command: |
+            aws cloudformation deploy --template-file template.yml --stack-name stack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
+
+
+workflows:
+  udactityWorkflow:
+    jobs:
+      - build
+      - create_infrastructure
