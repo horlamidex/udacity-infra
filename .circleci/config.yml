@@ -3,19 +3,19 @@ orbs:
   welcome:
     image: "circleci/welcome-orb@0.4.1"
   aws-cli:
-    - image: "circleci/aws-cli@2.0.3"
+    image: "circleci/aws-cli@2.0.3"
 
 jobs:
   build:
     docker:
-      - welcome
+    - image: "circleci/welcome-orb@0.4.1"
     steps:
       - checkout
       - run: echo "Hello, World"
   
   create_infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/aws-cli@2.0.3
     steps:
       - checkout
       - run: |
