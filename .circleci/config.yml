@@ -18,7 +18,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: |
+      - run:
           name: Create cloudformation stack
           command: |
             aws cloudformation deploy --template-file template.yml --stack-name stack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
